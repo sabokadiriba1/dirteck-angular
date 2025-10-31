@@ -1,0 +1,104 @@
+<!-- src/app/shared/components/user/user-menu/user-menu.component.html -->
+<div class="relative">
+  <!-- Trigger Button -->
+  <div 
+    (click)="toggleMenu()"
+    class="cursor-pointer"
+  >
+    <app-user-avatar
+      [user]="user"
+      [size]="'md'"
+      [clickable]="true"
+      [border]="true"
+    ></app-user-avatar>
+  </div>
+
+  <!-- Backdrop -->
+  @if (isOpen) {
+    <div 
+      class="fixed inset-0 z-40 user-menu-backdrop"
+      (click)="onBackdropClick($event)"
+    ></div>
+  }
+
+  <!-- Dropdown Menu -->
+  @if (isOpen) {
+    <div 
+      [class]="'absolute z-50 mt-2 w-80 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 ' +
+               (position === 'right' ? 'right-0' : 'left-0')"
+    >
+      <!-- User Info Section -->
+      <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+        <div class="flex items-center space-x-3">
+          <app-user-avatar
+            [user]="user"
+            [size]="'lg'"
+            [showStatus]="true"
+          ></app-user-avatar>
+          
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {{ user.name }}
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+              {{ user.email }}
+            </p>
+            @if (user.role) {
+              <p class="text-xs text-primary-600 dark:text-primary-400 font-medium mt-1">
+                {{ user.role }}
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Items -->
+      <div class="py-2">
+        @for (item of menuItems; track item.id) {
+          @if (item.divider) {
+            <div class="my-1 border-t border-gray-100 dark:border-gray-700"></div>
+          } @else {
+            <button
+              (click)="onMenuItemClick(item.id)"
+              [class]="'w-full flex items-center px-4 py-3 text-sm transition-colors ' +
+                      (item.variant === 'danger' ? 
+                       'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20' : 
+                       'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700')"
+            >
+              @if (item.icon) {
+                <lucide-icon 
+                  [name]="item.icon" 
+                  class="w-4 h-4 mr-3 flex-shrink-0"
+                ></lucide-icon>
+              } @else {
+                <div class="w-4 h-4 mr-3"></div>
+              }
+              
+              <span class="flex-1 text-left">{{ item.label }}</span>
+
+              <!-- Theme toggle indicator -->
+              @if (item.id === 'theme') {
+                <div class="flex items-center">
+                  <div 
+                    [class]="'w-8 h-5 flex items-center rounded-full p-1 transition-colors ' +
+                            (themeService.isDarkMode ? 'bg-primary-500 justify-end' : 'bg-gray-300 justify-start')"
+                  >
+                    <div class="w-3 h-3 bg-white rounded-full shadow-sm"></div>
+                  </div>
+                </div>
+              }
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+        <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+          <span>Dirteck System v1.0</span>
+          <span>© 2024 Company</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,49 @@
+<!-- src/app/shared/data-display/data-table/data-table.component.html -->
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+  <!-- Header -->
+  <app-data-table-header
+    [config]="effectiveConfig"
+    [selectedRows]="selectedRows"
+    [globalFilter]="globalFilter"
+    [columns]="visibleColumns"
+    [columnFilters]="columnFilters"
+    (globalFilterChange)="onGlobalFilterChange($event)"
+    (columnFilterChange)="onColumnFilterChange($event.key, $event.value)"
+    (action)="onAction($event)"
+  ></app-data-table-header>
+
+  <!-- Body -->
+  <app-data-table-body
+    [data]="displayedData"
+    [columns]="visibleColumns"
+    [config]="effectiveConfig"
+    [loading]="loading"
+    [selectedRows]="selectedRows"
+    [sortedColumn]="sortedColumn"
+    [sortDirection]="sortDirection"
+    [expandedRows]="expandedRows"
+    [columnWidths]="columnWidths"
+    [getRowId]="getRowId.bind(this)"
+    [isRowSelected]="isRowSelected.bind(this)"
+    [isRowExpanded]="isRowExpanded.bind(this)"
+    [getColumnWidth]="getColumnWidth.bind(this)"
+   
+    (sort)="onSort($event)"
+    (rowSelectionChange)="onRowSelectionChange($event)"
+    (allSelectionChange)="onAllSelectionChange($event)"
+    (action)="onAction($event.action, $event.row)"
+    (inlineEdit)="onInlineEdit($event.row, $event.field, $event.value)"
+    (rowExpand)="toggleRowExpansion($event)"
+  ></app-data-table-body>
+
+  <!-- Footer -->
+  <app-data-table-footer
+    [config]="effectiveConfig"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalRecords]="filteredData.length"
+    [totalPages]="totalPages"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  ></app-data-table-footer>
+</div>

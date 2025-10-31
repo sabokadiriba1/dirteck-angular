@@ -1,0 +1,23 @@
+<nav class="hidden md:flex items-center space-x-2 text-sm">
+  <a 
+    *ngFor="let item of items; let last = last; let i = index"
+    [routerLink]="item.path"
+    [class]="'flex items-center space-x-2 transition-colors ' + 
+             (item.active ? 'text-primary-600 dark:text-primary-400 font-medium' : 
+                           'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300')">
+    
+    <lucide-icon 
+      *ngIf="i === 0"
+      [name]="homeIcon" 
+      class="w-4 h-4">
+    </lucide-icon>
+    
+    <span [class.font-semibold]="item.active">{{ item.label }}</span>
+    
+    <lucide-icon 
+      *ngIf="!last"
+      [name]="chevronRightIcon" 
+      class="w-4 h-4 text-gray-400">
+    </lucide-icon>
+  </a>
+</nav>

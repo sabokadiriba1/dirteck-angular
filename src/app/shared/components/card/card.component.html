@@ -1,0 +1,65 @@
+<!-- src/app/shared/components/card/card.component.html -->
+<div 
+  [class]="'bg-white dark:bg-gray-800 rounded-2xl ' +
+           (config.shadow === 'none' ? '' : 
+            config.shadow === 'sm' ? 'shadow-sm' :
+            config.shadow === 'lg' ? 'shadow-lg' : 'shadow-md') + ' ' +
+           (config.border !== false ? 'border border-gray-200 dark:border-gray-700' : '') + ' ' +
+           (config.hover ? 'hover:shadow-lg transition-shadow duration-200 cursor-pointer' : '') + ' ' +
+           (config.padding || 'p-6')"
+>
+  <!-- Header -->
+  @if (config.title || config.icon || config.actions) {
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center space-x-3">
+        @if (config.icon) {
+          <div 
+            [class]="'p-2 rounded-xl ' + (config.iconBgColor || 'bg-primary-100 dark:bg-primary-900')">
+            <lucide-icon 
+              [name]="config.icon" 
+              [class]="'w-5 h-5 ' + (config.iconColor || 'text-primary-600 dark:text-primary-400')">
+            </lucide-icon>
+          </div>
+        }
+        <div>
+          @if (config.title) {
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ config.title }}</h3>
+          }
+          @if (config.subtitle) {
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ config.subtitle }}</p>
+          }
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      @if (config.actions && config.actions.length > 0) {
+        <div class="flex items-center space-x-2">
+          @for (action of config.actions; track action.label) {
+            <button
+              (click)="action.action()"
+              [class]="'p-2 rounded-lg transition-colors ' +
+                      (action.variant === 'primary' ? 'bg-primary-500 hover:bg-primary-600 text-white' :
+                       action.variant === 'danger' ? 'bg-red-500 hover:bg-red-600 text-white' :
+                       'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300')">
+              @if (action.icon) {
+                <lucide-icon [name]="action.icon" class="w-4 h-4"></lucide-icon>
+              }
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Content -->
+  <div class="card-content">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Footer -->
+  @if (config.footer) {
+    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+      <p class="text-sm text-gray-500 dark:text-gray-400">{{ config.footer }}</p>
+    </div>
+  }
+</div>

@@ -1,0 +1,43 @@
+<!-- src/app/shared/data-display/data-table/sub-components/data-table-header/data-table-header.component.html -->
+@if (config.showHeader && (config.globalFilter || config.actions.length > 0)) {
+  <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <!-- Global Search -->
+      @if (config.globalFilter) {
+        <div class="relative flex-1 max-w-md">
+          <input
+            type="text"
+            [value]="globalFilter"
+            (input)="onGlobalSearchChange($event)"
+            placeholder="Search..."
+            class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 dark:text-white"
+          >
+          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      }
+
+      <!-- Bulk Actions -->
+      @if (config.actions.length > 0 && selectedRows.length > 0) {
+        <div class="flex items-center space-x-2">
+          @for (action of config.actions; track action.id) {
+            @if (isActionVisible(action)) {
+              <button
+                (click)="onActionClick(action)"
+                [disabled]="isActionDisabled(action)"
+                [class]="'px-4 py-2 text-sm font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed ' +
+                        (action.variant === 'danger' ? 'bg-red-500 hover:bg-red-600 text-white' :
+                         action.variant === 'secondary' ? 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300' :
+                         action.variant === 'ghost' ? 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600' :
+                         'bg-primary-500 hover:bg-primary-600 text-white')"
+              >
+                {{ action.label }}
+              </button>
+            }
+          }
+        </div>
+      }
+    </div>
+  </div>
+}

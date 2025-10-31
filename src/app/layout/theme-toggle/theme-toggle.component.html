@@ -1,0 +1,10 @@
+<button
+  (click)="themeService.toggleTheme()"
+  class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-2xl transition-colors duration-200"
+  [attr.aria-label]="themeService.isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+>
+  <lucide-icon
+    [name]="themeService.isDarkMode ? 'sun' : 'moon'"
+    class="w-5 h-5"
+  ></lucide-icon>
+</button>

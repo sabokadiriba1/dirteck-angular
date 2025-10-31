@@ -1,0 +1,44 @@
+<!-- src/app/shared/components/user/user-avatar/user-avatar.component.html -->
+<div 
+  [class]="'flex items-center gap-3 ' + (clickable ? 'cursor-pointer' : '')"
+  (click)="onAvatarClick()"
+>
+  <!-- Avatar Container -->
+  <div class="relative inline-block">
+    <!-- Avatar Image or Initials -->
+    @if (user.avatar) {
+      <img
+        [src]="user.avatar"
+        [alt]="user.name"
+        [class]="sizeClasses + ' ' + roundedClasses + ' ' + borderClasses + ' object-cover'"
+      >
+    } @else {
+      <div
+        [class]="sizeClasses + ' ' + roundedClasses + ' ' + borderClasses + ' ' + backgroundColor + ' flex items-center justify-center text-white font-semibold select-none'"
+      >
+        {{ displayText }}
+      </div>
+    }
+
+    <!-- Status Indicator -->
+    @if (showStatus && user.status) {
+      <div
+        [class]="'absolute ' + statusPosition + ' ' + statusSize + ' ' + statusClasses + ' rounded-full border-2 border-white dark:border-gray-800'"
+      ></div>
+    }
+  </div>
+
+  <!-- User Name -->
+  @if (showName && user.name) {
+    <div class="flex flex-col">
+      <span class="text-sm font-medium text-gray-900 dark:text-white leading-tight">
+        {{ user.name }}
+      </span>
+      @if (user.role) {
+        <span class="text-xs text-gray-500 dark:text-gray-400 leading-tight">
+          {{ user.role }}
+        </span>
+      }
+    </div>
+  }
+</div>

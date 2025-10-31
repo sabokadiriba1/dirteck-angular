@@ -1,0 +1,403 @@
+<!-- src/app/shared/components/user/profile/profile.component.html -->
+@if (isOpen) {
+  <!-- Backdrop -->
+  <div 
+    class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 profile-backdrop"
+    (click)="onClose()"
+  >
+    <!-- Profile Modal -->
+    <div 
+      class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white">User Profile</h2>
+          @if (isEditing) {
+            <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 rounded-full">
+              Editing
+            </span>
+          }
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          @if (isEditing) {
+            <button
+              (click)="saveProfile()"
+              [disabled]="!hasChanges"
+              class="flex items-center space-x-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-xl transition-colors"
+            >
+              <lucide-icon [name]="saveIcon" class="w-4 h-4"></lucide-icon>
+              <span>Save</span>
+            </button>
+            
+            <button
+              (click)="cancelEditing()"
+              class="flex items-center space-x-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-colors"
+            >
+              <lucide-icon [name]="closeIcon" class="w-4 h-4"></lucide-icon>
+              <span>Cancel</span>
+            </button>
+          } @else {
+            <button
+              (click)="startEditing()"
+              class="flex items-center space-x-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl transition-colors"
+            >
+              <lucide-icon [name]="editIcon" class="w-4 h-4"></lucide-icon>
+              <span>Edit Profile</span>
+            </button>
+          }
+          
+          <button
+            (click)="onClose()"
+            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            <lucide-icon [name]="closeIcon" class="w-5 h-5 text-gray-500 dark:text-gray-400"></lucide-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex h-[calc(90vh-80px)]">
+        <!-- Sidebar Navigation -->
+        <div class="w-64 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+          <!-- User Summary -->
+          <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col items-center text-center">
+              <!-- Avatar -->
+              <div class="relative mb-3">
+                <app-user-avatar
+                  [user]="{
+                    id: profileData.personalInfo.id,
+                    name: displayName,
+                    email: profileData.personalInfo.email,
+                    avatar: currentAvatar
+                  }"
+                  [size]="'xl'"
+                  [border]="true"
+                ></app-user-avatar>
+                
+                @if (isEditing) {
+                  <label class="absolute bottom-0 right-0 p-1 bg-primary-500 text-white rounded-full cursor-pointer shadow-lg">
+                    <lucide-icon [name]="uploadIcon" class="w-4 h-4"></lucide-icon>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      class="hidden"
+                      (change)="onAvatarSelected($event)"
+                    >
+                  </label>
+                }
+              </div>
+              
+              <h3 class="font-semibold text-gray-900 dark:text-white">{{ displayName }}</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ profileData.personalInfo.email }}</p>
+              @if (profileData.personalInfo.jobTitle) {
+                <p class="text-xs text-primary-600 dark:text-primary-400 font-medium mt-1">
+                  {{ profileData.personalInfo.jobTitle }}
+                </p>
+              }
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <nav class="p-4 space-y-1">
+            <button
+              (click)="setActiveTab('personal')"
+              [class]="'w-full flex items-center space-x-3 px-3 py-2 rounded-xl transition-colors ' +
+                      (activeTab === 'personal' ? 
+                       'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 
+                       'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800')"
+            >
+              <lucide-icon [name]="usersIcon" class="w-4 h-4"></lucide-icon>
+              <span>Personal Info</span>
+            </button>
+
+            <button
+              (click)="setActiveTab('account')"
+              [class]="'w-full flex items-center space-x-3 px-3 py-2 rounded-xl transition-colors ' +
+                      (activeTab === 'account' ? 
+                       'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 
+                       'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800')"
+            >
+              <lucide-icon [name]="shieldIcon" class="w-4 h-4"></lucide-icon>
+              <span>Account Settings</span>
+            </button>
+
+            <button
+              (click)="setActiveTab('notifications')"
+              [class]="'w-full flex items-center space-x-3 px-3 py-2 rounded-xl transition-colors ' +
+                      (activeTab === 'notifications' ? 
+                       'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 
+                       'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800')"
+            >
+              <lucide-icon [name]="bellIcon" class="w-4 h-4"></lucide-icon>
+              <span>Notifications</span>
+            </button>
+
+            <button
+              (click)="setActiveTab('team')"
+              [class]="'w-full flex items-center space-x-3 px-3 py-2 rounded-xl transition-colors ' +
+                      (activeTab === 'team' ? 
+                       'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 
+                       'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800')"
+            >
+              <lucide-icon [name]="usersIcon" class="w-4 h-4"></lucide-icon>
+              <span>Team & Roles</span>
+            </button>
+
+            <button
+              (click)="setActiveTab('activity')"
+              [class]="'w-full flex items-center space-x-3 px-3 py-2 rounded-xl transition-colors ' +
+                      (activeTab === 'activity' ? 
+                       'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 
+                       'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800')"
+            >
+              <lucide-icon [name]="activityIcon" class="w-4 h-4"></lucide-icon>
+              <span>Activity</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto">
+          <!-- Personal Info Tab -->
+          @if (activeTab === 'personal') {
+            <div class="p-6">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Personal Information</h3>
+              
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Basic Information -->
+                <div class="space-y-6">
+                  <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+                    <h4 class="font-medium text-gray-900 dark:text-white mb-4">Basic Information</h4>
+                    
+                    <div class="space-y-4">
+                      <!-- First Name -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          First Name
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="text"
+                            [(ngModel)]="editedData.personalInfo.firstName"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.firstName }}</p>
+                        }
+                      </div>
+
+                      <!-- Last Name -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Last Name
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="text"
+                            [(ngModel)]="editedData.personalInfo.lastName"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.lastName }}</p>
+                        }
+                      </div>
+
+                      <!-- Email -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <lucide-icon [name]="mailIcon" class="w-4 h-4 inline mr-1"></lucide-icon>
+                          Email Address
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="email"
+                            [(ngModel)]="editedData.personalInfo.email"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.email }}</p>
+                        }
+                      </div>
+
+                      <!-- Phone -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <lucide-icon [name]="phoneIcon" class="w-4 h-4 inline mr-1"></lucide-icon>
+                          Phone Number
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="tel"
+                            [(ngModel)]="editedData.personalInfo.phone"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.phone || 'Not provided' }}</p>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Job Information -->
+                  <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+                    <h4 class="font-medium text-gray-900 dark:text-white mb-4">Job Information</h4>
+                    
+                    <div class="space-y-4">
+                      <!-- Job Title -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Job Title
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="text"
+                            [(ngModel)]="editedData.personalInfo.jobTitle"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.jobTitle || 'Not specified' }}</p>
+                        }
+                      </div>
+
+                      <!-- Department -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Department
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="text"
+                            [(ngModel)]="editedData.personalInfo.department"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.department || 'Not specified' }}</p>
+                        }
+                      </div>
+
+                      <!-- Employee ID -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Employee ID
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="text"
+                            [(ngModel)]="editedData.personalInfo.employeeId"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.employeeId || 'Not assigned' }}</p>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="space-y-6">
+                  <!-- Personal Details -->
+                  <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+                    <h4 class="font-medium text-gray-900 dark:text-white mb-4">Personal Details</h4>
+                    
+                    <div class="space-y-4">
+                      <!-- Date of Birth -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <lucide-icon [name]="calendarIcon" class="w-4 h-4 inline mr-1"></lucide-icon>
+                          Date of Birth
+                        </label>
+                        @if (isEditing) {
+                          <input
+                            type="date"
+                            [(ngModel)]="editedData.personalInfo.dateOfBirth"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">
+                            {{ (profileData.personalInfo.dateOfBirth | date) || 'Not provided' }}
+                          </p>
+                        }
+                      </div>
+
+                      <!-- Language -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Language
+                        </label>
+                        @if (isEditing) {
+                          <select
+                            [(ngModel)]="editedData.personalInfo.language"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                          </select>
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ getLanguageName(profileData.personalInfo.language) }}</p>
+                        }
+                      </div>
+
+                      <!-- Timezone -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Timezone
+                        </label>
+                        @if (isEditing) {
+                          <select
+                            [(ngModel)]="editedData.personalInfo.timezone"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          >
+                            <option value="UTC">UTC</option>
+                            <option value="America/New_York">Eastern Time</option>
+                            <option value="America/Chicago">Central Time</option>
+                            <option value="America/Denver">Mountain Time</option>
+                            <option value="America/Los_Angeles">Pacific Time</option>
+                          </select>
+                        } @else {
+                          <p class="text-gray-900 dark:text-white">{{ profileData.personalInfo.timezone }}</p>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Work Address -->
+                  @if (profileData.personalInfo.workAddress) {
+                    <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+                      <h4 class="font-medium text-gray-900 dark:text-white mb-4">
+                        <lucide-icon [name]="mapPinIcon" class="w-4 h-4 inline mr-1"></lucide-icon>
+                        Work Address
+                      </h4>
+                      
+                      <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                        <p>{{ profileData.personalInfo.workAddress.street }}</p>
+                        <p>{{ profileData.personalInfo.workAddress.city }}, {{ profileData.personalInfo.workAddress.state }} {{ profileData.personalInfo.workAddress.postalCode }}</p>
+                        <p>{{ profileData.personalInfo.workAddress.country }}</p>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Other tabs will be implemented similarly -->
+          @if (activeTab !== 'personal') {
+            <div class="p-6">
+              <div class="text-center py-12">
+                <lucide-icon [name]="editIcon" class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4"></lucide-icon>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{{ activeTab.charAt(0).toUpperCase() + activeTab.slice(1) }} Tab</h3>
+                <p class="text-gray-500 dark:text-gray-400">This section is under development</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

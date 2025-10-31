@@ -1,0 +1,28 @@
+<!-- src/app/shared/components/user/user-group-avatar/user-group-avatar.component.html -->
+<div class="flex items-center">
+  @for (user of displayedUsers; track user.id; let i = $index) {
+    <div 
+      [class]="'relative ' + (i > 0 ? overlapClasses : '')"
+      [style.zIndex]="displayedUsers.length - i"
+    >
+      <app-user-avatar
+        [user]="user"
+        [size]="size"
+        [showName]="false"
+        [showStatus]="false"
+        [border]="true"
+      ></app-user-avatar>
+    </div>
+  }
+
+  <!-- Remaining Count -->
+  @if (showCount && remainingCount > 0) {
+    <div
+      [class]="'relative flex items-center justify-center bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 text-xs font-medium border-2 border-white dark:border-gray-800 ' + 
+               getUserAvatarSize() + ' ' + overlapClasses"
+      [style.zIndex]="displayedUsers.length + 1"
+    >
+      +{{ remainingCount }}
+    </div>
+  }
+</div>
