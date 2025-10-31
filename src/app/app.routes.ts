@@ -12,10 +12,7 @@ export const routes: Routes = [
         path: 'dashboard', 
         loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) 
       },
-      { 
-        path: 'userprofile', 
-        loadComponent: () => import('./pages/userprofile/user-profile.component').then(m => m.UserProfileComponent) 
-      },
+ 
     //   { 
     //     path: 'sales', 
     //     loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) 

@@ -14,11 +14,13 @@ import { TreeTableColumn } from '../../shared/components/data-display/tree-table
 import { TreeTableConfig } from '../../shared/components/data-display/tree-table/models/tree-table-config';
 import { User } from '../../layout/header/header.component';
 import { UserAvatarComponent } from '../../shared/components/user/user-avatar/user-avatar.component';
+import { ProfileComponent } from '../../shared/components/user/profile/profile.component';
+import { ProfileData } from '../../shared/components/user/model/profile-data';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   templateUrl: './dashboard.component.html',
-  imports: [CommonModule, CardComponent, LucideAngularModule,DataTableComponent,TreeTableComponent]
+  imports: [CommonModule, CardComponent, LucideAngularModule,DataTableComponent,TreeTableComponent,ProfileComponent]
 })
 export class DashboardComponent {
   // Icons
@@ -734,7 +736,199 @@ teamMembers: User[] = [
     status: 'online'
   }
 ];
+// In your dashboard.component.ts - add these properties:
 
+// Add to imports
+
+// Add to your DashboardComponent class:
+isProfileOpen = true;
+
+// Sample profile data - replace with your actual user data
+// In your dashboard.component.ts - fix the profileData object:
+profileData: ProfileData = {
+  personalInfo: {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@company.com',
+    phone: '+1 (555) 123-4567',
+    jobTitle: 'Administrator',
+    department: 'IT',
+    employeeId: 'ADM-001',
+    language: 'en',
+    timezone: 'America/New_York',
+    workAddress: {
+      street: '123 Business Avenue',
+      city: 'New York',
+      state: 'NY',
+      country: 'USA',
+      postalCode: '10001'
+    },
+    dateOfBirth: '1985-06-15',
+    gender: 'Male',
+    nationality: 'American'
+  },
+  accountSettings: {
+    security: {
+      twoFactorEnabled: true,
+      lastPasswordChange: '2024-01-15',
+      loginHistory: [
+        {
+          date: '2024-01-20T10:30:00Z',
+          device: 'Chrome on Windows',
+          ip: '192.168.1.100',
+          location: 'New York, USA',
+          success: true
+        }
+      ],
+      activeSessions: [
+        {
+          id: 'session-1',
+          device: 'Chrome on Windows',
+          ip: '192.168.1.100',
+          lastActive: '2024-01-20T14:25:00Z',
+          location: 'New York, USA'
+        }
+      ]
+    },
+    preferences: {
+      theme: 'dark' as const,
+      language: 'en',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: '12h',
+      defaultDashboard: 'default'
+    },
+    accessibility: {
+      fontSize: 'medium' as const,
+      highContrast: false,
+      reducedMotion: false
+    }
+  },
+  notificationPreferences: {
+    channels: {
+      email: true,
+      push: true,
+      sms: false,
+      desktop: true,
+      inApp: true
+    },
+    types: {
+      systemAlerts: true,
+      taskAssignments: true,
+      approvalRequests: true,
+      reports: false,
+      securityAlerts: true,
+      teamUpdates: true
+    },
+    frequency: {
+      systemAlerts: 'realtime' as const,
+      taskUpdates: 'digest' as const,
+      reports: 'digest' as const
+    }
+  },
+  teamRoles: {
+    team: {
+      teamMembers: [
+        {
+          id: '2',
+          name: 'Sarah Wilson',
+          role: 'Manager',
+          email: 'sarah@company.com'
+        },
+        {
+          id: '3', 
+          name: 'Mike Johnson',
+          role: 'Developer',
+          email: 'mike@company.com'
+        }
+      ],
+      directReports: [
+        {
+          id: '4',
+          name: 'Emily Davis', 
+          role: 'Analyst',
+          email: 'emily@company.com'
+        }
+      ],
+      manager: {
+        id: '5',
+        name: 'Robert Brown',
+        role: 'Director',
+        email: 'robert@company.com'
+      },
+      department: 'IT'
+    },
+    roles: [
+      {
+        id: 'admin',
+        name: 'Administrator',
+        permissions: ['read', 'write', 'delete', 'admin'],
+        moduleAccess: ['all'],
+        dataScope: 'global',
+        approvalLimit: 10000
+      }
+    ],
+    organization: {
+      company: 'Your Company Inc.',
+      branch: 'Headquarters',
+      costCenter: 'IT-001',
+      employeeType: 'Full-time'
+    }
+  },
+  activityLog: [
+    {
+      id: '1',
+      timestamp: '2024-01-20T14:30:00Z',
+      action: 'Login',
+      module: 'Authentication',
+      details: 'Successful login from Chrome on Windows',
+      ip: '192.168.1.100',
+      device: 'Chrome on Windows'
+    },
+    {
+      id: '2',
+      timestamp: '2024-01-20T14:25:00Z',
+      action: 'View Report',
+      module: 'Dashboard',
+      details: 'Viewed Sales Overview report',
+      ip: '192.168.1.100',
+      device: 'Chrome on Windows'
+    }
+  ]
+};
+
+// Profile event handlers
+openProfile() {
+  this.isProfileOpen = true;
+}
+
+onProfileClose() {
+  this.isProfileOpen = false;
+}
+
+onProfileSave(updatedData: any) {
+  console.log('Profile saved:', updatedData);
+  this.profileData = updatedData;
+  // Here you would typically send the data to your backend
+  // this.userService.updateProfile(updatedData).subscribe(...);
+}
+
+onAvatarChange(file: File) {
+  console.log('Avatar file selected:', file);
+  // Handle avatar upload
+  // this.userService.uploadAvatar(file).subscribe(...);
+}
+
+// Helper method for language display
+getLanguageName(code: string): string {
+  const languages: { [key: string]: string } = {
+    'en': 'English',
+    'es': 'Spanish', 
+    'fr': 'French',
+    'de': 'German'
+  };
+  return languages[code] || code;
+}
 onAvatarClick(user: User) {
   console.log('Avatar clicked:', user);
   // Navigate to user profile or show user details

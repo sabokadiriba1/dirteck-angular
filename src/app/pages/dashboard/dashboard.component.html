@@ -178,5 +178,12 @@
     ></app-tree-table>
   </app-card>
 </div>
-
+<!-- Add this at the bottom of your dashboard.component.html -->
+<app-profile
+  [profileData]="profileData"
+  [isOpen]="isProfileOpen"
+  (profileClose)="onProfileClose()"
+  (profileSave)="onProfileSave($event)"
+  (avatarChange)="onAvatarChange($event)"
+></app-profile>
 </main>
