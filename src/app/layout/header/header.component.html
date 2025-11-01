@@ -42,23 +42,42 @@
       </button>
 
       <!-- Notifications -->
-      <button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative">
-        <lucide-icon [name]="bellIcon" class="w-5 h-5 text-gray-600 dark:text-gray-300"></lucide-icon>
-        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-      </button>
+   <!-- Notifications Dropdown -->
+      <div class="relative">
+        <button 
+          (click)="onNotificationsToggle()"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative"
+        >
+          <lucide-icon [name]="bellIcon" class="w-5 h-5 text-gray-600 dark:text-gray-300"></lucide-icon>
+          <!-- Unread badge -->
+          <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
+        </button>
 
+        
+      </div>
       <!-- User Avatar -->
       <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
        <!-- Clickable avatar -->
-<app-user-menu
-  [user]="currentUser"
-  [isOpen]="isUserMenuOpen"
-  (menuToggle)="onUserMenuToggle($event)"
-  (menuItemClick)="onUserMenuItemClick($event)"
-  (logout)="onUserLogout()"
-  (themeToggle)="onThemeToggle()"
-></app-user-menu>
+          <app-user-menu
+            [user]="currentUser"
+            [isOpen]="isUserMenuOpen"
+            (menuToggle)="onUserMenuToggle($event)"
+            (menuItemClick)="onUserMenuItemClick($event)"
+            (logout)="onUserLogout()"
+            (themeToggle)="onThemeToggle()"
+            >
+         </app-user-menu>
       </div>
     </div>
   </div>
+
+    <!-- ADD NOTIFICATIONS PANEL HERE -->
+  <app-notifications-panel
+    [isOpen]="isNotificationsOpen"
+    (panelClose)="onNotificationsClose()"
+    (notificationRead)="onNotificationRead($event)"
+    (notificationAction)="onNotificationAction($event)"
+    (markAllRead)="onMarkAllRead()"
+    (clearAll)="onClearAll()"
+  ></app-notifications-panel>
 </header>

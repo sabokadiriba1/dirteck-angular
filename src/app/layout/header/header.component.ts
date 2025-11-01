@@ -5,6 +5,7 @@ import { ThemeService } from '../../services/theme.service';
 import { LucideAngularModule, Menu, Search, Moon, Sun, Bell, User, ChevronRight, Home } from 'lucide-angular';
 import { BreadcrumbComponent } from '../app-layout/breadcrumb/breadcrumb.component';
 import { UserMenuComponent } from '../../shared/components/user/user-menu/user-menu.component';
+import { NotificationsPanelComponent } from '../../shared/components/feedback/notifications-panel/notifications-panel.component';
 
 export interface BreadcrumbItem {
   label: string;
@@ -25,7 +26,7 @@ export interface User {
   selector: 'app-header',
   standalone: true,
   templateUrl: './header.component.html',
-  imports: [CommonModule, LucideAngularModule,BreadcrumbComponent,UserMenuComponent]
+  imports: [CommonModule, LucideAngularModule,BreadcrumbComponent,UserMenuComponent, NotificationsPanelComponent ]
 })
 export class HeaderComponent {
   @Output() sidebarToggled = new EventEmitter<void>();
@@ -44,6 +45,7 @@ export class HeaderComponent {
   homeIcon = Home;
   chevronRightIcon = ChevronRight;
   isUserMenuOpen = false;
+  isNotificationsOpen = false;
   constructor(public themeService: ThemeService) {}
 // Single user
 currentUser: User = {
@@ -96,5 +98,28 @@ currentUser: User = {
   onThemeToggle() {
     console.log('Theme toggled from user menu');
   }
+  onNotificationsToggle() {
+    this.isNotificationsOpen = !this.isNotificationsOpen;
+    console.log(this.isNotificationsOpen)
+  }
 
+  onNotificationsClose() {
+    this.isNotificationsOpen = false;
+  }
+
+  onNotificationRead(notificationId: string) {
+    console.log('Notification read:', notificationId);
+  }
+
+  onNotificationAction(event: {notificationId: string, action: string}) {
+    console.log('Notification action:', event);
+  }
+
+  onMarkAllRead() {
+    console.log('Mark all as read');
+  }
+
+  onClearAll() {
+    console.log('Clear all notifications');
+  }
 }
